@@ -11,7 +11,6 @@ BORDER_H = "─"
 BORDER_V = "│"
 CORNERS = ("┌", "┐", "└", "┘")
 
-#: Index 0 is the empty cell; 1-7 match Tetromino.color.
 DARK_PIECES = ("#1a1a1a", "cyan", "blue", "orange1", "yellow", "green", "magenta", "red")
 LIGHT_PIECES = (
     "#d0d0d0",
@@ -79,7 +78,6 @@ class GameBoard(ThemedWidget):
         return self.config.height * self.cell_height + 2
 
     def _cell_at(self, x: int, y: int) -> int:
-        """The falling piece wins over the settled board beneath it."""
         if self._piece is not None:
             px = x - self._piece_position.x
             py = y - self._piece_position.y

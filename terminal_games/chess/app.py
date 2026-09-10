@@ -16,7 +16,6 @@ from .models import PIECE_SYMBOLS, create_initial_state, push_move
 from .widgets.chess_board import ChessBoard
 
 SIDEBAR_WIDTH = 34
-MAX_CELL_WIDTH = 13
 MAX_CELL_HEIGHT = 7
 
 
@@ -54,7 +53,6 @@ class ChessApp(GameApp):
     def on_unmount(self) -> None:
         self._executor.shutdown(wait=False, cancel_futures=True)
 
-    # ---- layout -----------------------------------------------------------
 
     def _configure_layout(self, force_reset: bool = False) -> None:
         if self._board is None:
@@ -63,8 +61,15 @@ class ChessApp(GameApp):
 
         available_width = max(40, self.viewport.width - SIDEBAR_WIDTH)
         available_height = max(24, self.viewport.height - 6)
-        cell_width = min(MAX_CELL_WIDTH, max(5, (available_width - 4) // 8))
-        cell_height = min(MAX_CELL_HEIGHT, max(3, (available_height - 2) // 8))
+        cell_height = max(
+            3,
+            min(
+                MAX_CELL_HEIGHT,
+                (available_height - 2) // 8,
+                (available_width - 4) // 16,
+            ),
+        )
+        cell_width = cell_height * 2
 
         if force_reset or (self._board.cell_width, self._board.cell_height) != (
             cell_width,
@@ -90,7 +95,6 @@ class ChessApp(GameApp):
         self.show_message(self._result_markup())
 
     def _result_markup(self) -> str:
-        """Terminal positions interrupt play; a plain check does not."""
         if not self.state.is_game_over():
             return ""
         status = self.state.get_game_status() or "Game over"
@@ -115,7 +119,6 @@ class ChessApp(GameApp):
             lines.append(f"  {name} lost: {symbols or '-'}")
         return "\n".join(lines)
 
-    # ---- AI ---------------------------------------------------------------
 
     def _trigger_ai_move(self) -> None:
         if self.state.is_game_over() or self.state.is_player_turn():
@@ -130,22 +133,20 @@ class ChessApp(GameApp):
         future.add_done_callback(self._ai_move_ready)
 
     def _ai_move_ready(self, future: Future) -> None:
-        """Runs on the worker thread — hand the result back before touching state."""
         try:
             move = future.result()
         except Exception:
-            return  # Executor shut down while a search was in flight.
+            return
         try:
             self.call_from_thread(self._apply_ai_move, move)
         except Exception:
-            pass  # App already closed.
+            pass
 
     def _apply_ai_move(self, move: Optional[chess.Move]) -> None:
         state = replace(self.state, is_thinking=False)
         self.state = push_move(state, move) if move else state
         self._update_widgets()
 
-    # ---- actions ----------------------------------------------------------
 
     @property
     def _accepts_input(self) -> bool:
@@ -175,7 +176,6 @@ class ChessApp(GameApp):
         self._move_cursor(1, 0)
 
     def _select_if_movable(self, square: int) -> bool:
-        """Select `square` when it holds a player piece that has a legal move."""
         piece = self.state.board.piece_at(square)
         if piece is None or piece.color != self.state.config.player_color:
             return False
@@ -202,13 +202,11 @@ class ChessApp(GameApp):
                 self._trigger_ai_move()
             return
 
-        # Not a legal destination — retarget onto another piece, or clear.
         if not self._select_if_movable(cursor):
             self.state = replace(self.state, selected_square=None)
         self._update_widgets()
 
     def _find_move(self, from_square: int, to_square: int) -> Optional[chess.Move]:
-        """The move between two squares, auto-promoting to a queen."""
         candidates = [
             m
             for m in self.state.board.legal_moves

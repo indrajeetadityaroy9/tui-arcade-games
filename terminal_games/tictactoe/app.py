@@ -16,6 +16,8 @@ from .game_logic import (
 )
 from .widgets.game_board import GameBoard
 
+MAX_CELL_HEIGHT = 13
+
 TURN_MESSAGE = "[bold cyan]Your turn (O)[/]"
 RESULT_COLORS = {"Win": "green", "Lose": "red"}
 
@@ -42,15 +44,17 @@ class TicTacToeApp(GameApp):
         yield Footer()
         yield MessageOverlay()
 
-    # ---- layout -----------------------------------------------------------
 
     def _cell_size(self) -> tuple[int, int]:
         available_width = max(30, self.viewport.width - 10)
         available_height = max(15, self.viewport.height - 11)
-        return (
-            max(5, (available_width - 4) // 3),
-            max(3, (available_height - 4) // 3),
+        cell_height = min(
+            MAX_CELL_HEIGHT,
+            (available_height - 4) // 3,
+            (available_width - 4) // 6,
         )
+        cell_height = max(3, cell_height)
+        return cell_height * 2, cell_height
 
     def _configure_layout(self, force_reset: bool = False) -> None:
         cell_width, cell_height = self._cell_size()
@@ -88,7 +92,6 @@ class TicTacToeApp(GameApp):
         )
         return f"[bold {color}]{message}[/]\n\n[dim]Press R to restart[/]"
 
-    # ---- actions ----------------------------------------------------------
 
     def _apply(self, transform) -> None:
         if self.state.is_game_over:

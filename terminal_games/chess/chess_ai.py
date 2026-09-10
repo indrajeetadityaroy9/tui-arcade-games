@@ -129,7 +129,7 @@ def minimax(
             max_eval = max(max_eval, eval_score)
             alpha = max(alpha, eval_score)
             if beta <= alpha:
-                break  
+                break
         return max_eval
     else:
         min_eval = float('inf')
@@ -140,7 +140,7 @@ def minimax(
             min_eval = min(min_eval, eval_score)
             beta = min(beta, eval_score)
             if beta <= alpha:
-                break  
+                break
         return min_eval
 def get_best_move(board: chess.Board, depth: int = 3) -> Optional[chess.Move]:
     if board.is_game_over():
@@ -193,7 +193,7 @@ def get_captured_pieces(board: chess.Board) -> dict[chess.Color, list[chess.Piec
     for color in [chess.WHITE, chess.BLACK]:
         for piece_type, starting in starting_counts.items():
             if piece_type == chess.KING:
-                continue  
+                continue
             current = current_counts[color][piece_type]
             missing = starting - current
             captured[color].extend([piece_type] * missing)

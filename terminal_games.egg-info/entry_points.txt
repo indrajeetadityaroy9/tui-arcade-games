@@ -1,7 +1,0 @@
-[console_scripts]
-terminal-games = terminal_games.launcher:main
-tg-chess = terminal_games.chess.app:main
-tg-snake = terminal_games.snake.app:main
-tg-spaceinvaders = terminal_games.spaceinvaders.app:main
-tg-tetris = terminal_games.tetris.app:main
-tg-tictactoe = terminal_games.tictactoe.app:main

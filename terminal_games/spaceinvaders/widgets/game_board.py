@@ -80,8 +80,6 @@ class GameBoard(ThemedWidget):
         width = self._config.width
         bg = styles["bg"]
 
-        # Paint into per-cell buffers, then run-length encode into segments —
-        # far fewer Segment objects than one per column at 20 Hz.
         chars = [" "] * width
         cell_styles: list[Style] = [bg] * width
 

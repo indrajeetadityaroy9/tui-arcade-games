@@ -8,15 +8,15 @@ class Position:
         return Position(self.x + other.x, self.y + other.y)
 @dataclass(frozen=True)
 class Tetromino:
-    shape: tuple[tuple[int, ...], ...]  
-    color: int  
+    shape: tuple[tuple[int, ...], ...]
+    color: int
 @dataclass(frozen=True)
 class BoardConfig:
     width: int = 14
     height: int = 24
 @dataclass(frozen=True)
 class GameState:
-    board: tuple[tuple[int, ...], ...]  
+    board: tuple[tuple[int, ...], ...]
     current_piece: Optional[Tetromino]
     position: Position
     score: int = 0

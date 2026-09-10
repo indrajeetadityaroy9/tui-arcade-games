@@ -1,18 +1,10 @@
-"""Sprite art, in two sizes.
-
-The board is measured in terminal characters, so a bigger invader is bigger art
-rather than a scale factor — that keeps movement and collisions at single-column
-resolution instead of making the fleet jump in coarse steps. LARGE is the normal
-set; SMALL is the fallback for terminals too short or narrow to fit it.
-"""
-
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class SpriteSet:
     player: tuple[str, ...]
-    enemies: tuple[tuple[str, ...], ...]  # indexed by enemy_type
+    enemies: tuple[tuple[str, ...], ...]
     player_bullet: str
     enemy_bullet: str
 
@@ -43,17 +35,17 @@ LARGE = SpriteSet(
         "███████",
     ),
     enemies=(
-        (  # squid
+        (
             " ▄██▄ ",
             "▐▌██▐▌",
             " ▀  ▀ ",
         ),
-        (  # crab
+        (
             "▄ ██ ▄",
             "▐████▌",
             " ▀▀▀▀ ",
         ),
-        (  # octopus
+        (
             " ████ ",
             "██▄▄██",
             " ▀  ▀ ",
@@ -79,7 +71,6 @@ SMALL = SpriteSet(
 
 
 def _validate() -> None:
-    """Every sprite row must be the same width, or blitting shears the art."""
     for name, sprites in (("LARGE", LARGE), ("SMALL", SMALL)):
         for label, rows in [("player", sprites.player)] + [
             (f"enemy{i}", e) for i, e in enumerate(sprites.enemies)

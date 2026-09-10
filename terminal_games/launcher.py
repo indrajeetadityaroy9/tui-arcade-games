@@ -105,13 +105,11 @@ class LauncherApp(App):
 
     def on_mount(self) -> None:
         self.theme = get_theme()
-        # Focus the list view so keyboard navigation works immediately
         self.query_one(ListView).focus()
 
     @on(ListView.Selected)
     def handle_game_selected(self, event: ListView.Selected) -> None:
         if event.item:
-            # ID is "game-{game_id}"
             game_id = event.item.id.replace("game-", "")
             self._selected_game = game_id
             self.exit()

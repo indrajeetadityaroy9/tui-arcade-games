@@ -33,13 +33,9 @@ TICK_INTERVAL = 0.05
 SHOOT_COOLDOWN = 0.25
 MAX_LEVEL = 8
 
-#: Past this the fleet is a thin band across a mostly empty field.
 MAX_BOARD_WIDTH = 80
 MAX_ENEMY_ROWS = 4
-#: Held below what the width allows so the fleet keeps room to track sideways —
-#: filling the board edge to edge makes it descend almost immediately.
 MAX_ENEMY_COLS = 7
-#: Rows of empty space the fleet must leave itself to descend into.
 DESCENT_MARGIN = 3
 FLEET_TOP = 2
 
@@ -71,7 +67,6 @@ class SpaceInvadersApp(GameApp):
         self._hud: HUD | None = None
         self._timer: Timer | None = None
         self._cooldown: Timer | None = None
-        # Fractional-rate sub-clocks driven off the fixed tick.
         self._move_accum = 0.0
         self._shoot_accum = 0.0
 
@@ -87,13 +82,11 @@ class SpaceInvadersApp(GameApp):
         self._board.set_config(self.config, self.sprites)
         self._restart_timers()
 
-    # ---- layout -----------------------------------------------------------
 
     def _calculate_config(self) -> tuple[SpriteSet, BoardConfig]:
         available_width = max(30, self.viewport.width - 6)
         available_height = max(11, self.viewport.height - 14)
 
-        # Fall back to the small art when the terminal cannot seat the big set.
         sprites = LARGE if available_width >= 50 and available_height >= 20 else SMALL
 
         width = min(MAX_BOARD_WIDTH, available_width)
@@ -149,7 +142,6 @@ class SpaceInvadersApp(GameApp):
         old: BoardConfig,
         new: BoardConfig,
     ) -> GameState:
-        """Slide the whole battlefield onto a resized board."""
         dx = (new.width - old.width) // 2
         dy = new.player_y - old.player_y
 
@@ -184,7 +176,6 @@ class SpaceInvadersApp(GameApp):
             enemy_bullets=shift(state.enemy_bullets),
         )
 
-    # ---- loop -------------------------------------------------------------
 
     def _restart_timers(self) -> None:
         for timer in (self._timer, self._cooldown):
@@ -254,7 +245,6 @@ class SpaceInvadersApp(GameApp):
             won=won,
         )
 
-    # ---- actions ----------------------------------------------------------
 
     def action_move_left(self) -> None:
         if self._is_active:
@@ -288,7 +278,6 @@ class SpaceInvadersApp(GameApp):
             config=self.config,
         )
         if advancing:
-            # Carry the running total into the next stage.
             self.state = replace(self.state, score=carried_score)
         self._restart_timers()
         self._update_widgets()

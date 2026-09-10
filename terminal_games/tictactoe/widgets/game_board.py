@@ -3,6 +3,7 @@ from rich.style import Style
 from textual.strip import Strip
 
 from ...core.render import ThemedWidget, on_bg
+from ..marks import BLOCK, mark_row
 from ..models import Board, Player
 
 
@@ -40,7 +41,6 @@ class GameBoard(ThemedWidget):
             "cursor": Style(bgcolor=colors["cursor"]),
             "win": Style(bgcolor=colors["win"]),
         }
-        # A mark's colour is constant; only the background behind it changes.
         for mark in ("x", "o"):
             for state, background in (
                 ("", bg),
@@ -77,7 +77,6 @@ class GameBoard(ThemedWidget):
         return self.total_height
 
     def _row_at(self, y: int) -> tuple[int, int] | None:
-        """Map a screen line to (board row, line within that row's cells)."""
         for row in range(3):
             start = 1 + row * (self.cell_height + 1)
             if start <= y < start + self.cell_height:
@@ -89,7 +88,6 @@ class GameBoard(ThemedWidget):
         border: Style = styles["border"]
         rule = "─" * self.cell_width
 
-        # The four horizontal rules: top, two dividers, bottom.
         if y == 0:
             return Strip([Segment(f"┌{rule}┬{rule}┬{rule}┐", border)])
         if y == self.total_height - 1:
@@ -115,16 +113,22 @@ class GameBoard(ThemedWidget):
                 suffix, background = "", styles["bg"]
 
             mark = {Player.X: "x", Player.O: "o"}.get(value)
-            if mark and line == self.cell_height // 2:
-                left = (self.cell_width - 1) // 2
-                right = self.cell_width - 1 - left  # keeps even widths exact
-                segments += [
-                    Segment(" " * left, background),
-                    Segment(mark.upper(), styles[mark + suffix]),
-                    Segment(" " * right, background),
-                ]
-            else:
+            if mark is None:
                 segments.append(Segment(" " * self.cell_width, background))
+            else:
+                stroke = styles[mark + suffix]
+                pattern = mark_row(mark.upper(), self.cell_width, self.cell_height, line)
+                start = 0
+                for index in range(1, len(pattern) + 1):
+                    end_of_run = index == len(pattern) or (
+                        (pattern[index] == BLOCK) != (pattern[start] == BLOCK)
+                    )
+                    if end_of_run:
+                        lit = pattern[start] == BLOCK
+                        segments.append(
+                            Segment(pattern[start:index], stroke if lit else background)
+                        )
+                        start = index
 
             segments.append(Segment("│", border))
         return Strip(segments)

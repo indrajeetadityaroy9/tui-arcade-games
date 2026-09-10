@@ -1,9 +1,3 @@
-"""Shared score bar and turn indicator.
-
-Interrupting messages (pause, game over, win, draw) do not live here — they go
-to the centred `MessageOverlay` instead.
-"""
-
 from dataclasses import dataclass
 
 from textual.containers import Vertical
@@ -13,11 +7,10 @@ from textual.widgets import Digits, Label, Static
 
 @dataclass(frozen=True)
 class Stat:
-    """One labelled number in the bar."""
 
     key: str
     label: str
-    pad: int = 0  # zero-pad to this width; 0 leaves the number bare
+    pad: int = 0
 
 
 class HUD(Widget):
@@ -61,8 +54,6 @@ class HUD(Widget):
             )
 
     def on_mount(self) -> None:
-        # A widget's on_mount can fire before its compose() children exist, so
-        # paint once the DOM has settled rather than immediately.
         self.call_after_refresh(self._render_values)
 
     def show(self, **values: int) -> None:
@@ -73,14 +64,13 @@ class HUD(Widget):
         for stat in self._stats:
             digits = self.query(f"#{stat.key}-digits")
             if not digits:
-                return  # children not mounted yet
+                return
             value = self._values.get(stat.key, 0)
             text = f"{value:0{stat.pad}d}" if stat.pad else str(value)
             digits.first(Digits).update(text)
 
 
 class Status(Widget):
-    """A single centred line, for whose-turn-it-is style text."""
 
     DEFAULT_CSS = """
     Status {

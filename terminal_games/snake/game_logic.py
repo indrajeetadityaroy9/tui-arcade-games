@@ -42,7 +42,6 @@ def spawn_apple(
         )
         if pos not in occupied:
             return pos
-    # Board is nearly full — fall back to an exhaustive scan.
     free = {
         Position(x, y)
         for x in range(config.columns)

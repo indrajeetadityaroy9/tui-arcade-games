@@ -16,8 +16,8 @@ class Position:
 @dataclass(frozen=True)
 class Snake:
     head: Position
-    velocity: Position  
-    cells: tuple[Position, ...]  
+    velocity: Position
+    cells: tuple[Position, ...]
     max_cells: int = 6
     @property
     def direction(self) -> Direction:

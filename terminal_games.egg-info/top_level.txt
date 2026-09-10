@@ -1,2 +1,0 @@
-scripts
-terminal_games

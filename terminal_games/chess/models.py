@@ -3,19 +3,19 @@ from enum import Enum
 from typing import Optional
 import chess
 class Difficulty(Enum):
-    EASY = 1      
-    MEDIUM = 2    
-    HARD = 3      
-    EXPERT = 4    
+    EASY = 1
+    MEDIUM = 2
+    HARD = 3
+    EXPERT = 4
 @dataclass(frozen=True)
 class GameConfig:
-    player_color: chess.Color = chess.WHITE  
+    player_color: chess.Color = chess.WHITE
     difficulty: Difficulty = Difficulty.HARD
 @dataclass(frozen=True)
 class GameState:
     board: chess.Board
-    cursor_square: int = chess.E2          
-    selected_square: Optional[int] = None  
+    cursor_square: int = chess.E2
+    selected_square: Optional[int] = None
     config: GameConfig = GameConfig()
     is_thinking: bool = False
     def get_legal_moves_from_selected(self) -> list[int]:

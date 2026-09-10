@@ -58,11 +58,8 @@ class TetrisApp(GameApp):
     def _start(self) -> None:
         self._restart_gravity()
 
-    # ---- layout -----------------------------------------------------------
 
     def _grid(self) -> Grid:
-        # A classic well is 10 columns; capping near that keeps pieces large
-        # relative to the field instead of scattered across a 40-wide board.
         return fit_grid(
             max(22, self.viewport.width - 6),
             max(16, self.viewport.height - 13),
@@ -112,7 +109,6 @@ class TetrisApp(GameApp):
         old: BoardConfig,
         new: BoardConfig,
     ) -> GameState:
-        """Carry the stack onto a resized well, anchored to the floor."""
         dx = (new.width - old.width) // 2
         dy = new.height - old.height
 
@@ -146,7 +142,6 @@ class TetrisApp(GameApp):
         board: tuple[tuple[int, ...], ...],
         config: BoardConfig,
     ) -> Position:
-        """Closest vertical slot to `start` where the piece legally sits."""
         for delta in range(config.height):
             for dy in (0, -delta, delta):
                 y = start.y + dy
@@ -156,7 +151,6 @@ class TetrisApp(GameApp):
                         return candidate
         return start
 
-    # ---- loop -------------------------------------------------------------
 
     def _restart_gravity(self) -> None:
         if self._gravity:
@@ -172,7 +166,6 @@ class TetrisApp(GameApp):
         self._advance(lambda state: move_down(state, self.config)[0])
 
     def _advance(self, transform) -> None:
-        """Apply a state transform, then resync gravity if the level changed."""
         if self.state is None or self.state.is_game_over or self.state.is_paused:
             return
         level = self.state.level
@@ -206,7 +199,6 @@ class TetrisApp(GameApp):
                 piece_position=self.state.position,
             )
 
-    # ---- actions ----------------------------------------------------------
 
     def action_move_left(self) -> None:
         self._advance(lambda state: move_left(state, self.config))

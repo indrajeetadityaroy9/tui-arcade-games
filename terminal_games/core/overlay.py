@@ -1,11 +1,3 @@
-"""Centred message panel for state changes that interrupt play.
-
-Pause, game over, win and draw messages sit on their own layer above the board
-rather than in a corner of the score bar, so they read as a break in the game.
-The overlay is transparent apart from the panel itself, and never takes focus,
-so the board stays visible behind it and key bindings keep working.
-"""
-
 from textual.widget import Widget
 from textual.widgets import Static
 
@@ -50,7 +42,6 @@ class MessageOverlay(Widget):
         self.call_after_refresh(self._render_message)
 
     def show(self, message: str) -> None:
-        """Display `message`, or hide the overlay entirely when it is empty."""
         if message == self._message:
             return
         self._message = message
@@ -71,7 +62,6 @@ def overlay_message(
     is_paused: bool = False,
     won: str = "",
 ) -> str:
-    """The pause / game-over banner shared by the arcade games."""
     if is_game_over:
         return "[bold red]GAME OVER[/]\n\n[dim]Press R to restart[/]"
     if won:

@@ -53,7 +53,6 @@ class SnakeApp(GameApp):
     def _start(self) -> None:
         self._timer = self.set_interval(TICK_INTERVAL, self._game_tick)
 
-    # ---- layout -----------------------------------------------------------
 
     def _grid(self) -> Grid:
         return fit_grid(
@@ -106,7 +105,6 @@ class SnakeApp(GameApp):
         old: BoardConfig,
         new: BoardConfig,
     ) -> tuple[int, int] | None:
-        """Translation that re-centres `cells`, or None if they no longer fit."""
         min_x = min(c.x for c in cells)
         max_x = max(c.x for c in cells)
         min_y = min(c.y for c in cells)
@@ -131,7 +129,6 @@ class SnakeApp(GameApp):
         old: BoardConfig,
         new: BoardConfig,
     ) -> GameState:
-        """Carry a live game onto a resized board."""
         cells = list(state.snake.cells)
         offset = self._offset(cells, old, new)
 
@@ -140,8 +137,6 @@ class SnakeApp(GameApp):
             mapped = [Position(c.x + dx, c.y + dy) for c in cells]
             apple = Position(state.apple.x + dx, state.apple.y + dy)
         else:
-            # Snake no longer fits — rescale proportionally, dropping the
-            # duplicates that collapsing coordinates inevitably produces.
             seen: set[Position] = set()
             mapped = []
             for cell in cells:
@@ -180,7 +175,6 @@ class SnakeApp(GameApp):
             max(0, min(config.rows - 1, y)),
         )
 
-    # ---- loop -------------------------------------------------------------
 
     def _game_tick(self) -> None:
         if self.state is None or self.state.is_game_over or self.state.is_paused:
@@ -211,7 +205,6 @@ class SnakeApp(GameApp):
                 apple=self.state.apple,
             )
 
-    # ---- actions ----------------------------------------------------------
 
     def _steer(self, direction: Direction) -> None:
         if self.state:

@@ -39,8 +39,6 @@ class BoardConfig:
     enemy_cols: int = 9
     enemy_width: int = LARGE.enemy_width
     enemy_height: int = LARGE.enemy_height
-    #: Gaps between invaders. Tight enough that the fleet reads as a formation
-    #: rather than scattered specks; the sprites' own blank edges do the rest.
     enemy_spacing: int = 2
     enemy_row_spacing: int = 0
 

@@ -37,14 +37,14 @@ def init_enemies(config: BoardConfig) -> tuple[Enemy, ...]:
         - config.enemy_spacing
     )
     start_x = (config.width - grid_width) // 2
-    start_y = 2  
+    start_y = 2
     for row in range(config.enemy_rows):
         if row == 0:
-            enemy_type = 0  
+            enemy_type = 0
         elif row == 1:
-            enemy_type = 1  
+            enemy_type = 1
         else:
-            enemy_type = 2  
+            enemy_type = 2
         for col in range(config.enemy_cols):
             x = start_x + col * (config.enemy_width + config.enemy_spacing)
             y = start_y + row * (config.enemy_height + config.enemy_row_spacing)
@@ -100,11 +100,11 @@ def update_enemies(state: GameState) -> GameState:
         return state
     hit_edge = False
     for enemy in active_enemies:
-        if state.direction == 1:  
+        if state.direction == 1:
             if enemy.x + state.config.enemy_width >= state.config.width - 1:
                 hit_edge = True
                 break
-        else:  
+        else:
             if enemy.x <= 1:
                 hit_edge = True
                 break

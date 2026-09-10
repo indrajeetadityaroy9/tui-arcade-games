@@ -1,7 +1,3 @@
-/* Shared chrome for the arcade games. Previously duplicated verbatim in
-   snake.tcss, tetris.tcss and spaceinvaders.tcss, and near-verbatim in
-   tictactoe.tcss. */
-
 Screen {
     align: center top;
     background: $background;

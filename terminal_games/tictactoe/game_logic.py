@@ -4,21 +4,21 @@ from .models import Player, Board, GameState, CellValue
 HUMAN_PLAYER = Player.O
 AI_PLAYER = Player.X
 WIN_COMBOS = (
-    (0, 1, 2),  
-    (3, 4, 5),  
-    (6, 7, 8),  
-    (0, 3, 6),  
-    (1, 4, 7),  
-    (2, 5, 8),  
-    (0, 4, 8),  
-    (6, 4, 2),  
+    (0, 1, 2),
+    (3, 4, 5),
+    (6, 7, 8),
+    (0, 3, 6),
+    (1, 4, 7),
+    (2, 5, 8),
+    (0, 4, 8),
+    (6, 4, 2),
 )
 def create_empty_board() -> Board:
     return tuple(range(9))
 def create_initial_state() -> GameState:
     return GameState(
         board=create_empty_board(),
-        cursor_position=4,  
+        cursor_position=4,
         is_game_over=False,
         winner=None,
         winning_cells=(),

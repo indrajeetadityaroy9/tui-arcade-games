@@ -7,6 +7,7 @@ from textual.strip import Strip
 
 from ...core.render import ThemedWidget
 from ..models import get_piece_symbol
+from ..pieces import art_for, size_for
 
 LEGAL_MOVE_DOT = "•"
 
@@ -20,7 +21,7 @@ class ChessBoard(ThemedWidget):
         "legal_move": "#66c2ff",
         "check": "#ff4444",
         "white_piece": "#ffffff",
-        "black_piece": "#000000",
+        "black_piece": "#101010",
     }
     LIGHT = {
         "light_square": "#eeeed2",
@@ -29,13 +30,13 @@ class ChessBoard(ThemedWidget):
         "selected": "#f6f669",
         "legal_move": "#baca44",
         "check": "#ff0000",
-        "white_piece": "#4a4a4a",
-        "black_piece": "#000000",
+        "white_piece": "#fdfdfd",
+        "black_piece": "#1b1b1b",
     }
 
     def __init__(self, id: Optional[str] = None) -> None:
         super().__init__(id=id)
-        self.cell_width = 9
+        self.cell_width = 10
         self.cell_height = 5
         self._board = chess.Board()
         self._cursor_square = chess.E2
@@ -90,7 +91,6 @@ class ChessBoard(ThemedWidget):
         label = styles["label"]
         board_height = 8 * self.cell_height
 
-        # File letters above and below the board.
         if y == 0 or y == board_height + 1:
             segments = [Segment("  ")]
             for file in self._file_order():
@@ -115,42 +115,56 @@ class ChessBoard(ThemedWidget):
             segments.append(Segment(f" {rank + 1}", label))
         return Strip(segments)
 
-    def _render_cell(self, square: int, cell_y: int, styles: dict) -> list[Segment]:
-        colors = styles["colors"]
-        piece = self._board.piece_at(square)
-
-        is_cursor = square == self._cursor_square
-        is_selected = square == self._selected_square
-        is_legal = square in self._legal_moves
+    def _square_key(self, square: int, piece: Optional[chess.Piece]) -> str:
         in_check = (
             piece is not None
             and piece.piece_type == chess.KING
             and piece.color == self._board.turn
             and self._board.is_check()
         )
+        if square == self._selected_square:
+            return "selected"
+        if square == self._cursor_square:
+            return "cursor"
+        if in_check:
+            return "check"
+        if square in self._legal_moves:
+            return "legal_move"
+        light = (chess.square_file(square) + chess.square_rank(square)) % 2 == 1
+        return "light_square" if light else "dark_square"
 
-        # Selected beats cursor beats check beats legal-move beats plain square.
-        if is_selected:
-            key = "selected"
-        elif is_cursor:
-            key = "cursor"
-        elif in_check:
-            key = "check"
-        elif is_legal:
-            key = "legal_move"
-        else:
-            light = (chess.square_file(square) + chess.square_rank(square)) % 2 == 1
-            key = "light_square" if light else "dark_square"
-
+    def _render_cell(self, square: int, cell_y: int, styles: dict) -> list[Segment]:
+        colors = styles["colors"]
+        piece = self._board.piece_at(square)
+        key = self._square_key(square, piece)
         background = styles[key]
 
-        if cell_y == self._mid_row:
-            if piece:
-                color = colors["black_piece" if piece.color == chess.BLACK else "white_piece"]
-                style = Style(color=color, bgcolor=colors[key], bold=True)
-                return [Segment(get_piece_symbol(piece).center(self.cell_width), style)]
-            if is_legal and not is_cursor and not is_selected:
-                style = Style(color="#004080", bgcolor=colors[key], bold=True)
-                return [Segment(LEGAL_MOVE_DOT.center(self.cell_width), style)]
+        if piece is not None:
+            piece_color = colors[
+                "black_piece" if piece.color == chess.BLACK else "white_piece"
+            ]
+            style = Style(color=piece_color, bgcolor=colors[key], bold=True)
+            rows = art_for(piece.piece_type, size_for(self.cell_width, self.cell_height))
+
+            if rows is None:
+                if cell_y == self._mid_row:
+                    return [Segment(get_piece_symbol(piece).center(self.cell_width), style)]
+                return [Segment(" " * self.cell_width, background)]
+
+            top = (self.cell_height - len(rows)) // 2
+            art_row = cell_y - top
+            if 0 <= art_row < len(rows):
+                return [Segment(self._fit(rows[art_row]), style)]
+            return [Segment(" " * self.cell_width, background)]
+
+        if cell_y == self._mid_row and key == "legal_move":
+            dot = Style(color="#004080", bgcolor=colors[key], bold=True)
+            return [Segment(LEGAL_MOVE_DOT.center(self.cell_width), dot)]
 
         return [Segment(" " * self.cell_width, background)]
+
+    def _fit(self, art_row: str) -> str:
+        if len(art_row) > self.cell_width:
+            start = (len(art_row) - self.cell_width) // 2
+            return art_row[start:start + self.cell_width]
+        return art_row.center(self.cell_width)

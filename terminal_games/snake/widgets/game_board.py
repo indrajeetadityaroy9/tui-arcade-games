@@ -49,7 +49,6 @@ class GameBoard(ThemedWidget):
         self.cell_width = cell_width
         self.cell_height = cell_height
         self._apple = Position(0, 0)
-        # Flattened once per update so render_line does O(1) lookups per cell.
         self._segment_at: dict[Position, str] = {}
 
     def build_styles(self, colors: dict[str, str]) -> dict:
@@ -85,8 +84,6 @@ class GameBoard(ThemedWidget):
 
     @property
     def _apple_text(self) -> str:
-        """Inset from the cell edges so the apple stays distinguishable from a
-        snake segment by shape, not colour alone."""
         if self.cell_width >= 4:
             return " " + HEAD * (self.cell_width - 2) + " "
         return APPLE.center(self.cell_width)
@@ -119,7 +116,6 @@ class GameBoard(ThemedWidget):
                 segments.append(Segment(self._apple_text, styles["apple"]))
             elif pos in self._segment_at:
                 part = self._segment_at[pos]
-                # Fill the whole cell so the body reads as one continuous snake.
                 segments.append(Segment(PART_CHARS[part] * width, styles[part]))
             else:
                 segments.append(Segment(" " * width, styles["empty"]))
