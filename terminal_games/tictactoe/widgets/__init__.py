@@ -1,3 +1,3 @@
 from .game_board import GameBoard
-from .status import Status
-__all__ = ["GameBoard", "Status"]
+
+__all__ = ["GameBoard"]

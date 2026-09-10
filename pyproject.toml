@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.11,<0.12"]
+build-backend = "uv_build"
 
 [project]
 name = "terminal-games"
@@ -22,8 +22,6 @@ tg-tetris = "terminal_games.tetris.app:main"
 tg-tictactoe = "terminal_games.tictactoe.app:main"
 tg-spaceinvaders = "terminal_games.spaceinvaders.app:main"
 
-[tool.setuptools.packages.find]
-where = ["."]
-
-[tool.setuptools.package-data]
-"*" = ["*.tcss"]
+[tool.uv.build-backend]
+module-root = ""
+module-name = "terminal_games"

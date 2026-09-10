@@ -1,5 +1,6 @@
 README.md
 pyproject.toml
+scripts/smoke_test.py
 terminal_games/__init__.py
 terminal_games/config.py
 terminal_games/launcher.py

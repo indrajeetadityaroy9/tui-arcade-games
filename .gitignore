@@ -23,3 +23,6 @@ coverage/
 *.tmp
 *.temp
 CLAUDE.md
+.venv/
+*.egg-info/
+__pycache__/

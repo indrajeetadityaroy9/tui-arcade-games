@@ -174,7 +174,7 @@ def check_collisions(state: GameState) -> GameState:
     player_left = state.player.x
     player_right = state.player.x + state.config.player_width
     player_top = state.config.player_y
-    player_bottom = state.config.player_y + 2
+    player_bottom = state.config.player_y + state.config.player_height
     enemy_bullets_active = list(state.enemy_bullets)
     player_hit = False
     for i, bullet in enumerate(enemy_bullets_active):

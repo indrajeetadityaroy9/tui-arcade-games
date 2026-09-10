@@ -1,6 +1,7 @@
 Screen {
     align: center top;
     background: $background;
+    layers: base overlay;
 }
 #game-container {
     width: auto;

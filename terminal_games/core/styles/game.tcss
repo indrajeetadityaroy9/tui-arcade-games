@@ -1,34 +1,51 @@
+/* Shared chrome for the arcade games. Previously duplicated verbatim in
+   snake.tcss, tetris.tcss and spaceinvaders.tcss, and near-verbatim in
+   tictactoe.tcss. */
+
 Screen {
     align: center top;
     background: $background;
+    layers: base overlay;
 }
+
 #game-container {
     width: auto;
     height: auto;
     min-width: 50;
     align: center top;
     border: round $primary;
-    padding: 1 2;
+    padding: 1;
     background: $surface;
 }
-Status {
+
+HUD, Status {
     dock: top;
-    height: 5;
-    min-height: 5;
     width: 100%;
     background: $surface;
     border-bottom: solid $primary-darken-2;
     padding: 0 1;
 }
-Status Static {
+
+HUD {
+    height: 5;
+    min-height: 5;
+}
+
+Status {
+    height: 3;
+}
+
+HUD Static, Status Static {
     background: transparent;
 }
+
 GameBoard {
     width: auto;
     height: auto;
     margin: 1 0;
     background: transparent;
 }
+
 Footer {
     height: 1;
 }

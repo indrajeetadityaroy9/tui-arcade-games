@@ -1,0 +1,45 @@
+[tools]
+python = "3.13"
+uv = "0.11.30"
+
+# Auto-activates .venv on `cd` into this directory (mise is already activated in
+# your .zshrc), so `source .venv/bin/activate` is never needed. Creates the venv
+# with uv on first entry if it is missing.
+[env]
+_.python.venv = { path = ".venv", create = true, uv_create_args = ["--python", "3.13"] }
+
+# Keeps .venv matching uv.lock on every entry. No-op (~10ms) when already in sync.
+[hooks]
+enter = "uv sync --quiet"
+
+[tasks.play]
+description = "Launch the game menu"
+run = "terminal-games"
+
+[tasks.chess]
+description = "Play Chess"
+run = "tg-chess"
+
+[tasks.snake]
+description = "Play Snake"
+run = "tg-snake"
+
+[tasks.tetris]
+description = "Play Tetris"
+run = "tg-tetris"
+
+[tasks.tictactoe]
+description = "Play Tic-Tac-Toe"
+run = "tg-tictactoe"
+
+[tasks.invaders]
+description = "Play Space Invaders"
+run = "tg-spaceinvaders"
+
+[tasks.sync]
+description = "Reinstall dependencies from uv.lock"
+run = "uv sync"
+
+[tasks.smoke]
+description = "Headless render check for all five games plus the launcher"
+run = "uv run python scripts/smoke_test.py"

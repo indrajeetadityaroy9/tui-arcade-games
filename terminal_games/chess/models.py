@@ -17,9 +17,7 @@ class GameState:
     cursor_square: int = chess.E2          
     selected_square: Optional[int] = None  
     config: GameConfig = GameConfig()
-    is_thinking: bool = False              
-    last_move_from: Optional[int] = None   
-    last_move_to: Optional[int] = None     
+    is_thinking: bool = False
     def get_legal_moves_from_selected(self) -> list[int]:
         if self.selected_square is None:
             return []
@@ -61,13 +59,7 @@ def create_initial_state(
 def push_move(state: GameState, move: chess.Move) -> GameState:
     new_board = state.board.copy()
     new_board.push(move)
-    return replace(
-        state,
-        board=new_board,
-        last_move_from=move.from_square,
-        last_move_to=move.to_square,
-        selected_square=None,
-    )
+    return replace(state, board=new_board, selected_square=None)
 PIECE_SYMBOLS = {
     (chess.PAWN, chess.WHITE): "♙",
     (chess.KNIGHT, chess.WHITE): "♘",
@@ -86,25 +78,3 @@ def get_piece_symbol(piece: Optional[chess.Piece]) -> str:
     if piece is None:
         return " "
     return PIECE_SYMBOLS.get((piece.piece_type, piece.color), "?")
-COLORS_DARK = {
-    "light_square": "#f0d9b5",       
-    "dark_square": "#b58863",        
-    "cursor": "#ffff00",             
-    "selected": "#7fff00",           
-    "legal_move": "#66c2ff",         
-    "check": "#ff4444",              
-    "white_piece": "#ffffff",        
-    "black_piece": "#000000",        
-}
-COLORS_LIGHT = {
-    "light_square": "#eeeed2",       
-    "dark_square": "#769656",        
-    "cursor": "#ff6600",             
-    "selected": "#f6f669",           
-    "legal_move": "#baca44",         
-    "check": "#ff0000",              
-    "white_piece": "#4a4a4a",        
-    "black_piece": "#000000",        
-}
-def get_theme_colors(is_light_theme: bool) -> dict:
-    return COLORS_LIGHT if is_light_theme else COLORS_DARK
